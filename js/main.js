@@ -1,0 +1,64 @@
+const burger = document.getElementById("burger");
+const navMenu = document.getElementById("nav-menu");
+
+if (burger && navMenu) {
+  burger.addEventListener("click", function () {
+    burger.classList.toggle("active");
+    navMenu.classList.toggle("open");
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const list = document.querySelector(".news__list");
+  const btn = document.querySelector(".news__btn");
+  if (!list || !btn) return;
+
+  const items = list.querySelectorAll(".box");
+  if (!items.length) {
+    btn.style.display = "none";
+    return;
+  }
+
+  let step = 6;
+  let visible = 6;
+
+  const getStep = () =>
+    window.innerWidth <= 480 ? 3 : window.innerWidth <= 1280 ? 4 : 6;
+
+  const applyShow = () => {
+    items.forEach((el, i) => {
+      if (i < visible) el.classList.add("show");
+    });
+    if ([...items].every((el) => el.classList.contains("show"))) {
+      btn.style.display = "none";
+    }
+  };
+
+  const init = () => {
+    step = getStep();
+    visible = step;
+    applyShow();
+  };
+
+  const showMore = () => {
+    step = getStep();
+    let count = 0;
+    items.forEach((el) => {
+      if (!el.classList.contains("show") && count < step) {
+        el.classList.add("show");
+        count++;
+      }
+    });
+    if ([...items].every((el) => el.classList.contains("show"))) {
+      btn.style.display = "none";
+    }
+  };
+
+  init();
+  btn.addEventListener("click", showMore);
+
+  window.addEventListener("resize", () => {
+    const newStep = getStep();
+    if (newStep !== step) step = newStep;
+  });
+});
